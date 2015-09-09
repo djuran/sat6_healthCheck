@@ -254,6 +254,12 @@ echo " - Checking status of ${service}"
 if (( $release >= 7 ))
   then
      ## Is it running?
+     if [[${service} == "ntpd"]];then
+       if $(systemctl status chronyd);then
+         printOK "chronyd is running"
+         break
+       fi
+     fi
      running=$(systemctl is-active ${service} 2> /dev/null)
      if [[ $running == "active" ]]
        then
@@ -475,7 +481,7 @@ echo -e "
 checkDNS $(hostname)
 checkSELinux
 checkOSupdates
-for service in firewalld ntpd 
+for service in firewalld ntpd chronyd 
 do
   checkService ${service}
 done
